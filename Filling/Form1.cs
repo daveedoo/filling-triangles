@@ -25,6 +25,7 @@ namespace Filling
             int w = pictureBox.Width / N;
             int h = pictureBox.Height / M;
             Triangles = new Triangle[2 * N * M];
+
             for (int i = 0; i < M; i++)
                 for (int j = 0; j < N; j++)
                 {
@@ -36,10 +37,21 @@ namespace Filling
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             Bitmap newBitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
-            for (int i = 0; i < 2*N*M; i++)
+
+            //// testing triangles
+            ////Triangle T = new Triangle(new Point(20, 20), new Point(20, 400), new Point(300, 400));
+            ////Triangle T = new Triangle(new Point(20, 20), new Point(300, 400), new Point(300, 500));
+            //Triangle T = new Triangle(new Point(20, 20), new Point(300, 500), new Point(300, 400));
+            ////Triangle T = new Triangle(new Point(300, 20), new Point(20, 400), new Point(300, 400));
+            //T.Draw(newBitmap);
+            //T.Fill(newBitmap);
+
+            for (int i = 0; i < 2 * N * M; i++)
             {
+                Triangles[i].Fill(newBitmap);
                 Triangles[i].Draw(newBitmap);
             }
+
             pictureBox.Image.Dispose();
             pictureBox.Image = newBitmap;
         }
