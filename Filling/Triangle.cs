@@ -95,14 +95,15 @@ namespace Filling
                 }
                 AET.Sort((e1, e2) => e1.x.CompareTo(e2.x));
 
-                // TODO: algorytm uproszczony, działa tylko dla trójkątów (i wielokątów wypukłych)
+                // TODO: algorytm uproszczony, działa tylko dla trójkątów (i wielokątów wypukłych?)
                 for (int i = 1; i < AET.Count; i++)
                 {
                     Point P0 = new Point(Convert.ToInt32(AET[i - 1].x), y);
                     Point P1 = new Point(Convert.ToInt32(AET[i].x), y);
 
-                    for (int x = P0.X; x <= P1.X; x++)
-                        bmp.SetPixel(x, P1.Y, Color.Red);
+                    if (P1.Y > 0 && P1.Y < bmp.Height)
+                        for (int x = P0.X; x < Math.Min(P1.X, bmp.Width); x++)
+                            bmp.SetPixel(x, P1.Y, Color.Red);
                 }
 
                 for (int i = 0; i < AET.Count; i++)
