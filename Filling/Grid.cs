@@ -18,30 +18,30 @@ namespace Filling
 
         private int mvIndex = -1;  // index przesuwanego wierzchołka
 
-        public Grid(int pictureBoxWidth, int pictureBoxHeight, int N = 10, int M = 15)
+        public Grid(int pictureBoxWidth, int pictureBoxHeight, int xUnits = 10, int yUnits = 15)
         {
-            if (N < 1 || M < 1)
+            if (xUnits < 1 || yUnits < 1)
                 throw new ArgumentException("Grid dimensions should be positive.");
             if (pictureBoxWidth < 0 || pictureBoxHeight < 0)
                 throw new ArgumentException("Incorrect pictureBox dimensions.");
 
-            int unitWidth = pictureBoxWidth / N;
-            int unitHeight = pictureBoxHeight / M;
-            xUnits = N;
-            yUnits = M;
+            int unitWidth = pictureBoxWidth / xUnits;
+            int unitHeight = pictureBoxHeight / yUnits;
+            this.xUnits = xUnits;
+            this.yUnits = yUnits;
             Width = unitWidth * xUnits + 1;
             Height = unitHeight * yUnits + 1;
 
-            Triangles = new Triangle[2 * N * M];
+            Triangles = new Triangle[2 * xUnits * yUnits];
             directBitmap = new DirectBitmap(pictureBoxWidth, pictureBoxHeight);
 
-            for (int i = 0; i < M; i++)
-                for (int j = 0; j < N; j++)
+            for (int i = 0; i < yUnits; i++)
+                for (int j = 0; j < xUnits; j++)
                 {// kolejność punktów istotna
-                    Triangles[2 * i * N + 2 * j] = new Triangle(new Point(unitWidth * j, unitHeight * i),
+                    Triangles[2 * i * xUnits + 2 * j] = new Triangle(new Point(unitWidth * j, unitHeight * i),
                         new Point(unitWidth * (j + 1), unitHeight * i),
                         new Point(unitWidth * j, unitHeight * (i + 1)));
-                    Triangles[2 * i * N + 2 * j + 1] = new Triangle(new Point(unitWidth * (j + 1), unitHeight * (i + 1)),
+                    Triangles[2 * i * xUnits + 2 * j + 1] = new Triangle(new Point(unitWidth * (j + 1), unitHeight * (i + 1)),
                         new Point(unitWidth * (j + 1), unitHeight * i),
                         new Point(unitWidth * j, unitHeight * (i + 1)));
                 }

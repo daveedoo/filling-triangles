@@ -1,12 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Filling
 {
     public partial class Form1 : Form
     {
-        private int N = 3;
-        private int M = 4;
         private Grid Grid;
         private Point MiddleDown;
 
@@ -15,7 +14,7 @@ namespace Filling
             InitializeComponent();
             pictureBox.Image = new Bitmap(pictureBox.Width, pictureBox.Height);
 
-            Grid = new Grid(pictureBox.Width, pictureBox.Height, N, M);
+            Grid = new Grid(pictureBox.Width, pictureBox.Height, (int)numericUpDownX.Value, (int)numericUpDownY.Value);
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
@@ -48,6 +47,16 @@ namespace Filling
                 else
                     pictureBox.Cursor = Cursors.Default;
             }
+        }
+
+        private void numericUpDownX_ValueChanged(object sender, EventArgs e)
+        {
+            Grid = new Grid(pictureBox.Width, pictureBox.Height, (int)numericUpDownX.Value, (int)numericUpDownY.Value);
+        }
+
+        private void numericUpDownY_ValueChanged(object sender, EventArgs e)
+        {
+            Grid = new Grid(pictureBox.Width, pictureBox.Height, (int)numericUpDownX.Value, (int)numericUpDownY.Value);
         }
     }
 }
