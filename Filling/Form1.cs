@@ -10,50 +10,42 @@ using System.Windows.Forms;
 
 namespace Filling
 {
-    public partial class Form1 : System.Windows.Forms.Form
+    public partial class Form1 : Form
     {
         private int N = 10;
-        private int M = 10;
-
-        private Triangle[] Triangles;
+        private int M = 15;
+        private Grid Grid;
 
         public Form1()
         {
             InitializeComponent();
             pictureBox.Image = new Bitmap(pictureBox.Width, pictureBox.Height);
 
-            int w = pictureBox.Width / N;
-            int h = pictureBox.Height / M;
-            Triangles = new Triangle[2 * N * M];
-
-            for (int i = 0; i < M; i++)
-                for (int j = 0; j < N; j++)
-                {
-                    Triangles[2 * i * N + 2 * j] = new Triangle(new Point(w * j, h * i), new Point(w * (j + 1), h * i), new Point(w * j, h * (i + 1)));
-                    Triangles[2 * i * N + 2 * j + 1] = new Triangle(new Point(w * (j + 1), h * (i + 1)), new Point(w * (j + 1), h * i), new Point(w * j, h * (i + 1)));
-                }
+            Grid = new Grid(pictureBox.Width, pictureBox.Height, N, M);
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
-            Bitmap newBitmap = new Bitmap(pictureBox.Width, pictureBox.Height);
+            Grid.Paint(pictureBox);
+        }
 
-            //// testing triangles
-            ////Triangle T = new Triangle(new Point(20, 20), new Point(20, 400), new Point(300, 400));
-            ////Triangle T = new Triangle(new Point(20, 20), new Point(300, 400), new Point(300, 500));
-            //Triangle T = new Triangle(new Point(20, 20), new Point(300, 500), new Point(300, 400));
-            ////Triangle T = new Triangle(new Point(300, 20), new Point(20, 400), new Point(300, 400));
-            //T.Draw(newBitmap);
-            //T.Fill(newBitmap);
-
-            for (int i = 0; i < 2 * N * M; i++)
+        private void pictureBox_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
             {
-                Triangles[i].Fill(newBitmap);
-                Triangles[i].Draw(newBitmap);
+                if (Grid.IsCloseToInnerVertex(e.Location))
+                {
+                    MessageBox.Show(this, $"da");
+                }
             }
+        }
 
-            pictureBox.Image.Dispose();
-            pictureBox.Image = newBitmap;
+        private void pictureBox_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (Grid.IsCloseToInnerVertex(e.Location))
+                pictureBox.Cursor = Cursors.Hand;
+            else
+                pictureBox.Cursor = Cursors.Default;
         }
     }
 }

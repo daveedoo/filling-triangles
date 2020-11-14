@@ -76,9 +76,9 @@ namespace Filling
             ET[y].Add(e);
         }
 
-        public void Draw(Bitmap bmp)
+        public void Draw(DirectBitmap bmp)
         {
-            Graphics G = Graphics.FromImage(bmp);
+            Graphics G = Graphics.FromImage(bmp.Bitmap);
 
             for (int i = 0; i < Points.Length - 1; i++)
                 G.DrawLine(Pens.Black, Points[i], Points[i + 1]);
@@ -87,10 +87,8 @@ namespace Filling
             G.Dispose();
         }
 
-        public void Fill(Bitmap bmp)
+        public void Fill(DirectBitmap bmp)
         {
-            Graphics G = Graphics.FromImage(bmp);
-
             List<Edge> AET = new List<Edge>();
             for (int y = yMin; y <= yMax; y++)
             {
@@ -105,10 +103,15 @@ namespace Filling
                 {
                     Point P1 = new Point(Convert.ToInt32(AET[0].x + 1.0), y);
                     Point P2 = new Point(Convert.ToInt32(AET[1].x - 1.0), y);
-                    if (P1.X < P2.X)
-                        G.DrawLine(Pens.Red, P1, P2);
-                    else if (P1.X == P2.X)
-                        bmp.SetPixel(P1.X, P1.Y, Color.Red);
+                    for (int x = P1.X; x <= P2.X; x++)
+                    {
+                        //bmp.SetPixel(x, P1.Y, image.GetPixel(x % image.Width, y % image.Height));
+                        bmp.SetPixel(x, P1.Y, Color.Red);
+                    }
+                    //if (P1.X < P2.X)
+                    //    G.DrawLine(Pens.Red, P1, P2);
+                    //else if (P1.X == P2.X)
+                    //    bmp.SetPixel(P1.X, P1.Y, Color.Red);
                 }
 
                 for (int i = 0; i < AET.Count; i++)
@@ -122,8 +125,6 @@ namespace Filling
                         AET[i].AddP();
                 }
             }
-
-            G.Dispose();
         }
     }
 }
