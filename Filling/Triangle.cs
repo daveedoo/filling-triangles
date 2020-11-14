@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Filling
 {
@@ -43,34 +40,34 @@ namespace Filling
             }
         }
 
-        private Point[] Points { get; }
-        private int yMin { get; }
-        private int yMax { get; }
+        private Point[] Points { get; } = new Point[3];
+        private int yMin { get; set; }
+        private int yMax { get; set; }
         private Dictionary<int, List<Edge>> ET;
+        
+        public Point this[int idx] { get => Points[idx]; }
 
-        public Triangle(Point p1, Point p2, Point p3)
+        /// <summary>
+        /// Kolejność punktów jest zachowana przez całe życie obiektu
+        /// </summary>
+        public Triangle(Point p0, Point p1, Point p2)
         {
-            Points = new Point[3];
-            Points[0] = p1;
-            Points[1] = p2;
-            Points[2] = p3;
-            yMin = Math.Min(p1.Y, Math.Min(p2.Y, p3.Y));
-            yMax = Math.Max(p1.Y, Math.Max(p2.Y, p3.Y));
+            Points[0] = p0;
+            Points[1] = p1;
+            Points[2] = p2;
+            yMin = Math.Min(p0.Y, Math.Min(p1.Y, p2.Y));
+            yMax = Math.Max(p0.Y, Math.Max(p1.Y, p2.Y));
             ET = new Dictionary<int, List<Edge>>();
 
             // filling Buckets
-            int y;
-            Edge e;
             for (int i = 0; i < Points.Length - 1; i++)
-            {
-                y = Math.Min(Points[i].Y, Points[i + 1].Y);
-                e = new Edge(Points[i], Points[i + 1]);
-                if (!ET.ContainsKey(y))
-                    ET.Add(y, new List<Edge>());
-                ET[y].Add(e);
-            }
-            y = Math.Min(Points[Points.Length - 1].Y, Points[0].Y);
-            e = new Edge(Points[Points.Length - 1], Points[0]);
+                AddEdge(Points[i], Points[i + 1]);
+            AddEdge(Points[Points.Length - 1], Points[0]);
+        }
+        private void AddEdge(Point p1, Point p2)
+        {
+            int y = Math.Min(p1.Y, p2.Y);
+            Edge e = new Edge(p1, p2);
             if (!ET.ContainsKey(y))
                 ET.Add(y, new List<Edge>());
             ET[y].Add(e);
@@ -98,20 +95,14 @@ namespace Filling
                 }
                 AET.Sort((e1, e2) => e1.x.CompareTo(e2.x));
 
-                // TODO: algorytm uproszczony, działa tylko dla trójkątów
-                if (AET.Count == 2 || AET.Count == 3)
+                // TODO: algorytm uproszczony, działa tylko dla trójkątów (i wielokątów wypukłych)
+                for (int i = 1; i < AET.Count; i++)
                 {
-                    Point P1 = new Point(Convert.ToInt32(AET[0].x + 1.0), y);
-                    Point P2 = new Point(Convert.ToInt32(AET[1].x - 1.0), y);
-                    for (int x = P1.X; x <= P2.X; x++)
-                    {
-                        //bmp.SetPixel(x, P1.Y, image.GetPixel(x % image.Width, y % image.Height));
+                    Point P0 = new Point(Convert.ToInt32(AET[i - 1].x), y);
+                    Point P1 = new Point(Convert.ToInt32(AET[i].x), y);
+
+                    for (int x = P0.X; x <= P1.X; x++)
                         bmp.SetPixel(x, P1.Y, Color.Red);
-                    }
-                    //if (P1.X < P2.X)
-                    //    G.DrawLine(Pens.Red, P1, P2);
-                    //else if (P1.X == P2.X)
-                    //    bmp.SetPixel(P1.X, P1.Y, Color.Red);
                 }
 
                 for (int i = 0; i < AET.Count; i++)
@@ -125,6 +116,25 @@ namespace Filling
                         AET[i].AddP();
                 }
             }
+        }
+
+        // przesuwa wierzchołek o podanym indeksie
+        public void Offset(int index, int offsetX, int offsetY)
+        {
+            if (index < 0 || index > 2)
+                throw new ArgumentException("Index is bad.");
+
+            Points[index].Offset(offsetX, offsetY);
+            ET.Clear();
+
+            for (int i = 0; i < Points.Length - 1; i++)
+                AddEdge(Points[i], Points[i + 1]);
+            AddEdge(Points[Points.Length - 1], Points[0]);
+
+            if (Points[index].Y < yMin)
+                yMin = Points[index].Y;
+            else if (Points[index].Y > yMax)
+                yMax = Points[index].Y;
         }
     }
 }

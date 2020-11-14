@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 using System.Windows.Forms;
 
 namespace Filling
 {
     public partial class Form1 : Form
     {
-        private int N = 10;
-        private int M = 15;
+        private int N = 3;
+        private int M = 4;
         private Grid Grid;
+        private Point MiddleDown;
 
         public Form1()
         {
@@ -26,26 +20,34 @@ namespace Filling
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
-            Grid.Paint(pictureBox);
+            pictureBox.Image.Dispose();
+            pictureBox.Image = Grid.Paint();
         }
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Middle)
             {
-                if (Grid.IsCloseToInnerVertex(e.Location))
-                {
-                    MessageBox.Show(this, $"da");
-                }
+                if (Grid.SetVertexToMove(e.Location))
+                    MiddleDown = e.Location;
             }
         }
 
         private void pictureBox_MouseMove(object sender, MouseEventArgs e)
         {
-            if (Grid.IsCloseToInnerVertex(e.Location))
-                pictureBox.Cursor = Cursors.Hand;
-            else
-                pictureBox.Cursor = Cursors.Default;
+            if (e.Button == MouseButtons.Middle)
+            {
+                if (Grid.TryMoveVertex(MiddleDown, e.Location))
+                    MiddleDown = e.Location;
+            }
+
+            else if (e.Button == MouseButtons.None)
+            {
+                if (Grid.IsCloseToInnerVertex(e.Location))
+                    pictureBox.Cursor = Cursors.Hand;
+                else
+                    pictureBox.Cursor = Cursors.Default;
+            }
         }
     }
 }
