@@ -73,18 +73,20 @@ namespace Filling
             ET[y].Add(e);
         }
 
-        public void Draw(DirectBitmap bmp)
+        public void Draw(DirectBitmap bmp, Color color)
         {
             Graphics G = Graphics.FromImage(bmp.Bitmap);
 
+            Pen pen = new Pen(color);
             for (int i = 0; i < Points.Length - 1; i++)
-                G.DrawLine(Pens.Black, Points[i], Points[i + 1]);
-            G.DrawLine(Pens.Black, Points[Points.Length - 1], Points[0]);
+                G.DrawLine(pen, Points[i], Points[i + 1]);
+            G.DrawLine(pen, Points[Points.Length - 1], Points[0]);
 
+            pen.Dispose();
             G.Dispose();
         }
 
-        public void Fill(DirectBitmap bmp)
+        public void Fill(DirectBitmap bmp, Func<int, int, Color> color)
         {
             List<Edge> AET = new List<Edge>();
             for (int y = yMin; y <= yMax; y++)
@@ -103,7 +105,7 @@ namespace Filling
 
                     if (P1.Y > 0 && P1.Y < bmp.Height)
                         for (int x = P0.X; x < Math.Min(P1.X, bmp.Width); x++)
-                            bmp.SetPixel(x, P1.Y, Color.Red);
+                            bmp.SetPixel(x, P1.Y, color(x, y));
                 }
 
                 for (int i = 0; i < AET.Count; i++)

@@ -27,6 +27,16 @@ namespace Filling
             BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
             Bitmap = new Bitmap(width, height, width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
         }
+        public DirectBitmap(int width, int height, string filename)
+        {
+            Image img = Image.FromFile(filename);
+            Width = width;
+            Height = height;
+            Bits = new Int32[width * height];
+            BitsHandle = GCHandle.Alloc(Bits, GCHandleType.Pinned);
+            Bitmap = new Bitmap(img, width, height);
+            //Bitmap = new Bitmap(Width, Height, Width * 4, PixelFormat.Format32bppPArgb, BitsHandle.AddrOfPinnedObject());
+        }
 
         public void SetPixel(int x, int y, Color colour)
         {

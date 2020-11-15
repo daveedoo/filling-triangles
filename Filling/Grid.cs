@@ -7,10 +7,10 @@ namespace Filling
 {
     public class Grid
     {
-        private int yUnits;     // liczba komórek po współrzędnej X
-        private int xUnits;     // liczba komórek po współrzędnej Y
-        private int Width;
-        private int Height;
+        private int yUnits;     // liczba komórek po współrzędnej Y
+        private int xUnits;     // liczba komórek po współrzędnej X
+        //private int Width;
+        //private int Height;
 
         private int R = 5;      // "promień" wierzchołków
         private Triangle[] Triangles;
@@ -18,7 +18,7 @@ namespace Filling
 
         private int mvIndex = -1;  // index przesuwanego wierzchołka
 
-        public Grid(int pictureBoxWidth, int pictureBoxHeight, int xUnits = 10, int yUnits = 15)
+        public Grid(int pictureBoxWidth, int pictureBoxHeight, int xUnits = 3, int yUnits = 4)
         {
             if (xUnits < 1 || yUnits < 1)
                 throw new ArgumentException("Grid dimensions should be positive.");
@@ -29,8 +29,8 @@ namespace Filling
             int unitHeight = pictureBoxHeight / yUnits;
             this.xUnits = xUnits;
             this.yUnits = yUnits;
-            Width = unitWidth * xUnits + 1;
-            Height = unitHeight * yUnits + 1;
+            //Width = unitWidth * xUnits + 1;
+            //Height = unitHeight * yUnits + 1;
 
             Triangles = new Triangle[2 * xUnits * yUnits];
             directBitmap = new DirectBitmap(pictureBoxWidth, pictureBoxHeight);
@@ -47,17 +47,18 @@ namespace Filling
                 }
         }
 
-        public Bitmap Paint()
+        public Bitmap Paint(Func<int, int, Color> insideColor, Color contour, bool drawContours)
         {
             directBitmap.Dispose();
-            directBitmap = new DirectBitmap(Width, Height);
+            directBitmap = new DirectBitmap(directBitmap.Width, directBitmap.Height);
 
             for (int i = 0; i < 2 * yUnits * xUnits; i++)
-                Triangles[i].Fill(directBitmap);
-            for (int i = 0; i < 2 * yUnits * xUnits; i++)
-                Triangles[i].Draw(directBitmap);
+                Triangles[i].Fill(directBitmap, insideColor);
+            if (drawContours)
+                for (int i = 0; i < 2 * yUnits * xUnits; i++)
+                    Triangles[i].Draw(directBitmap, contour);
 
-            return directBitmap.Bitmap;
+            return directBitmap.Bitmap.Clone() as Bitmap;
         }
 
         public bool SetVertexToMove(Point m)
@@ -101,7 +102,7 @@ namespace Filling
         // Jeśli punkt jest blisko krawędzi: -1
         private int CloseTriangle(Point m)
         {
-            if (m.X < R || m.X > (Width - R) || m.Y < R || m.Y > (Height - R) ||    // punkt przy krawędzi
+            if (m.X < R || m.X > (directBitmap.Width - R) || m.Y < R || m.Y > (directBitmap.Height - R) ||    // punkt przy krawędzi
                 xUnits < 2 || yUnits < 2)   //nie ma w gridzie punktów wewnętrznych
                 return -1;
 
