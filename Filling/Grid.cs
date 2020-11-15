@@ -9,21 +9,25 @@ namespace Filling
     {
         private int yUnits;     // liczba komórek po współrzędnej Y
         private int xUnits;     // liczba komórek po współrzędnej X
-        //private int Width;
-        //private int Height;
+        //private int Width;    // używana szerokość bitmapy
+        //private int Height;   // używana wysokość bitmapy
 
-        private int R = 5;      // "promień" wierzchołków
+        private int mvIndex = -1;  // index przesuwanego wierzchołka
+        private int R = 5;      // "promień" wierzchołków - do ich przesuwania
         private Triangle[] Triangles;
         private DirectBitmap directBitmap;
 
-        private int mvIndex = -1;  // index przesuwanego wierzchołka
+        public Color ContourColor { get; set; }
+        public Func<int, int, Color> InsideColor { get; set; }
 
-        public Grid(int pictureBoxWidth, int pictureBoxHeight, int xUnits = 3, int yUnits = 4)
+        public Grid(int pictureBoxWidth, int pictureBoxHeight, int xUnits, int yUnits, Func<int, int, Color> insideColor, Color contour)
         {
             if (xUnits < 1 || yUnits < 1)
                 throw new ArgumentException("Grid dimensions should be positive.");
             if (pictureBoxWidth < 0 || pictureBoxHeight < 0)
                 throw new ArgumentException("Incorrect pictureBox dimensions.");
+            ContourColor = contour;
+            InsideColor = insideColor;
 
             int unitWidth = pictureBoxWidth / xUnits;
             int unitHeight = pictureBoxHeight / yUnits;
@@ -47,16 +51,21 @@ namespace Filling
                 }
         }
 
-        public Bitmap Paint(Func<int, int, Color> insideColor, Color contour, bool drawContours)
+        public Bitmap Paint(bool drawContours = true, Func<int, int, Color, Color> modification = null)
         {
             directBitmap.Dispose();
             directBitmap = new DirectBitmap(directBitmap.Width, directBitmap.Height);
 
-            for (int i = 0; i < 2 * yUnits * xUnits; i++)
-                Triangles[i].Fill(directBitmap, insideColor);
+            if (!(modification is null))
+                for (int i = 0; i < 2 * yUnits * xUnits; i++)
+                    Triangles[i].Fill(directBitmap, (x, y) => modification(x, y, InsideColor(x, y)));
+            else
+                for (int i = 0; i < 2 * yUnits * xUnits; i++)
+                    Triangles[i].Fill(directBitmap, InsideColor);
+
             if (drawContours)
                 for (int i = 0; i < 2 * yUnits * xUnits; i++)
-                    Triangles[i].Draw(directBitmap, contour);
+                    Triangles[i].Draw(directBitmap, ContourColor);
 
             return directBitmap.Bitmap.Clone() as Bitmap;
         }

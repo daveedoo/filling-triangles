@@ -41,10 +41,23 @@
             this.pictureButton = new System.Windows.Forms.Button();
             this.colorButton = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.contourCheckBox = new System.Windows.Forms.CheckBox();
+            this.lambertGroupBox = new System.Windows.Forms.GroupBox();
+            this.mTrackBar = new System.Windows.Forms.TrackBar();
+            this.label6 = new System.Windows.Forms.Label();
+            this.ksTrackBar = new System.Windows.Forms.TrackBar();
+            this.kdTrackBar = new System.Windows.Forms.TrackBar();
+            this.lightZValue = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.lightZMaxLabel = new System.Windows.Forms.Label();
+            this.lightZMinLabel = new System.Windows.Forms.Label();
+            this.lambertCheckBox = new System.Windows.Forms.CheckBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.lightZTrackBar = new System.Windows.Forms.TrackBar();
             this.insideColorDialog = new System.Windows.Forms.ColorDialog();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.contourColorDialog = new System.Windows.Forms.ColorDialog();
-            this.contourCheckBox = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.flowLayoutPanel1.SuspendLayout();
@@ -53,6 +66,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownX)).BeginInit();
             this.fillingGroupBox.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
+            this.lambertGroupBox.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lightZTrackBar)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -87,6 +105,7 @@
             // 
             this.flowLayoutPanel1.Controls.Add(this.groupBoxDims);
             this.flowLayoutPanel1.Controls.Add(this.fillingGroupBox);
+            this.flowLayoutPanel1.Controls.Add(this.lambertGroupBox);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(771, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
@@ -223,11 +242,6 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // openFileDialog1
-            // 
-            this.openFileDialog1.FileName = "openFileDialog1";
-            this.openFileDialog1.InitialDirectory = "C:\\Users\\damak\\Desktop\\PW\\GK\\filling-triangles\\Filling\\bin\\Debug\\maps";
-            // 
             // contourCheckBox
             // 
             this.contourCheckBox.AutoSize = true;
@@ -241,6 +255,149 @@
             this.contourCheckBox.TabIndex = 3;
             this.contourCheckBox.Text = "Draw contours";
             this.contourCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // lambertGroupBox
+            // 
+            this.lambertGroupBox.Controls.Add(this.mTrackBar);
+            this.lambertGroupBox.Controls.Add(this.label6);
+            this.lambertGroupBox.Controls.Add(this.ksTrackBar);
+            this.lambertGroupBox.Controls.Add(this.kdTrackBar);
+            this.lambertGroupBox.Controls.Add(this.lightZValue);
+            this.lambertGroupBox.Controls.Add(this.label5);
+            this.lambertGroupBox.Controls.Add(this.lightZMaxLabel);
+            this.lambertGroupBox.Controls.Add(this.lightZMinLabel);
+            this.lambertGroupBox.Controls.Add(this.lambertCheckBox);
+            this.lambertGroupBox.Controls.Add(this.label4);
+            this.lambertGroupBox.Controls.Add(this.label3);
+            this.lambertGroupBox.Controls.Add(this.lightZTrackBar);
+            this.lambertGroupBox.Location = new System.Drawing.Point(3, 203);
+            this.lambertGroupBox.Name = "lambertGroupBox";
+            this.lambertGroupBox.Size = new System.Drawing.Size(200, 300);
+            this.lambertGroupBox.TabIndex = 5;
+            this.lambertGroupBox.TabStop = false;
+            this.lambertGroupBox.Text = "Lambert";
+            // 
+            // mTrackBar
+            // 
+            this.mTrackBar.Location = new System.Drawing.Point(18, 148);
+            this.mTrackBar.Maximum = 100;
+            this.mTrackBar.Minimum = 1;
+            this.mTrackBar.Name = "mTrackBar";
+            this.mTrackBar.Size = new System.Drawing.Size(158, 45);
+            this.mTrackBar.TabIndex = 11;
+            this.mTrackBar.Value = 50;
+            this.mTrackBar.ValueChanged += new System.EventHandler(this.mTrackBar_ValueChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(4, 151);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(15, 13);
+            this.label6.TabIndex = 10;
+            this.label6.Text = "m";
+            // 
+            // ksTrackBar
+            // 
+            this.ksTrackBar.Location = new System.Drawing.Point(18, 115);
+            this.ksTrackBar.Maximum = 100;
+            this.ksTrackBar.Name = "ksTrackBar";
+            this.ksTrackBar.Size = new System.Drawing.Size(158, 45);
+            this.ksTrackBar.TabIndex = 9;
+            this.ksTrackBar.Value = 50;
+            this.ksTrackBar.ValueChanged += new System.EventHandler(this.ksTrackBar_ValueChanged);
+            // 
+            // kdTrackBar
+            // 
+            this.kdTrackBar.Location = new System.Drawing.Point(18, 86);
+            this.kdTrackBar.Maximum = 100;
+            this.kdTrackBar.Name = "kdTrackBar";
+            this.kdTrackBar.Size = new System.Drawing.Size(158, 45);
+            this.kdTrackBar.TabIndex = 6;
+            this.kdTrackBar.Value = 50;
+            this.kdTrackBar.ValueChanged += new System.EventHandler(this.kdTrackBar_ValueChanged);
+            // 
+            // lightZValue
+            // 
+            this.lightZValue.AutoSize = true;
+            this.lightZValue.Location = new System.Drawing.Point(82, 37);
+            this.lightZValue.Name = "lightZValue";
+            this.lightZValue.Size = new System.Drawing.Size(19, 13);
+            this.lightZValue.TabIndex = 4;
+            this.lightZValue.Text = "10";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(4, 118);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(18, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "ks";
+            // 
+            // lightZMaxLabel
+            // 
+            this.lightZMaxLabel.AutoSize = true;
+            this.lightZMaxLabel.Location = new System.Drawing.Point(174, 59);
+            this.lightZMaxLabel.Name = "lightZMaxLabel";
+            this.lightZMaxLabel.Size = new System.Drawing.Size(14, 13);
+            this.lightZMaxLabel.TabIndex = 3;
+            this.lightZMaxLabel.Text = "Z";
+            // 
+            // lightZMinLabel
+            // 
+            this.lightZMinLabel.AutoSize = true;
+            this.lightZMinLabel.Location = new System.Drawing.Point(6, 59);
+            this.lightZMinLabel.Name = "lightZMinLabel";
+            this.lightZMinLabel.Size = new System.Drawing.Size(14, 13);
+            this.lightZMinLabel.TabIndex = 2;
+            this.lightZMinLabel.Text = "Z";
+            // 
+            // lambertCheckBox
+            // 
+            this.lambertCheckBox.AutoSize = true;
+            this.lambertCheckBox.Checked = true;
+            this.lambertCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.lambertCheckBox.Location = new System.Drawing.Point(6, 17);
+            this.lambertCheckBox.Name = "lambertCheckBox";
+            this.lambertCheckBox.Size = new System.Drawing.Size(113, 17);
+            this.lambertCheckBox.TabIndex = 5;
+            this.lambertCheckBox.Text = "Switch on the light";
+            this.lambertCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 89);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(19, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "kd";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 37);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(78, 13);
+            this.label3.TabIndex = 0;
+            this.label3.Text = "Light z-postion:";
+            // 
+            // lightZTrackBar
+            // 
+            this.lightZTrackBar.Location = new System.Drawing.Point(18, 53);
+            this.lightZTrackBar.Maximum = 200;
+            this.lightZTrackBar.Minimum = 1;
+            this.lightZTrackBar.Name = "lightZTrackBar";
+            this.lightZTrackBar.Size = new System.Drawing.Size(158, 45);
+            this.lightZTrackBar.TabIndex = 1;
+            this.lightZTrackBar.Value = 10;
+            this.lightZTrackBar.ValueChanged += new System.EventHandler(this.lightZTrackBar_ValueChanged);
+            // 
+            // openFileDialog1
+            // 
+            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.InitialDirectory = "C:\\Users\\damak\\Desktop\\PW\\GK\\filling-triangles\\Filling\\bin\\Debug\\maps";
             // 
             // Form1
             // 
@@ -264,6 +421,12 @@
             this.fillingGroupBox.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
+            this.lambertGroupBox.ResumeLayout(false);
+            this.lambertGroupBox.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.mTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ksTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.kdTrackBar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.lightZTrackBar)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -287,6 +450,19 @@
         private System.Windows.Forms.ColorDialog contourColorDialog;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox contourCheckBox;
+        private System.Windows.Forms.GroupBox lambertGroupBox;
+        private System.Windows.Forms.TrackBar lightZTrackBar;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label lightZValue;
+        private System.Windows.Forms.Label lightZMaxLabel;
+        private System.Windows.Forms.Label lightZMinLabel;
+        private System.Windows.Forms.CheckBox lambertCheckBox;
+        private System.Windows.Forms.TrackBar kdTrackBar;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TrackBar ksTrackBar;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TrackBar mTrackBar;
+        private System.Windows.Forms.Label label6;
     }
 }
 
