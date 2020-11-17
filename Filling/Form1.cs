@@ -3,51 +3,18 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
+
 namespace Filling
 {
     public partial class Form1 : Form
     {
         private Point MouseMiddleDown;
         private Bitmap img;
+        private Bitmap map;
         private Grid Grid;
+        private System.Timers.Timer timer;
 
         private LambertParameters lambertParameters;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="kd"></param>
-        /// <param name="light"></param>
-        /// <param name="pixel"></param>
-        /// <param name="lightposition"></param>
-        /// <param name="N">wektor normalny</param>
-        /// <returns></returns>
-        //public static Color Lambert(int x, int y, double kd, Color light, Color pixel, (int x, int y, int z) lightposition, (double x, double y, double z) N)
-        //{
-        //    (double R, double G, double B) Il = (light.R / 255.0, light.G / 255.0, light.B / 255.0);
-        //    (double R, double G, double B) Io = (pixel.R / 255.0, pixel.G / 255.0, pixel.B / 255.0);
-
-        //    (int x, int y, int z) lightVector = (lightposition.x - x, lightposition.y - y, lightposition.z);
-        //    double lightVecLen = Math.Sqrt(lightVector.x*lightVector.x + lightVector.y*lightVector.y + lightVector.z*lightVector.z);
-        //    (double x, double y, double z) L = (lightVector.x / lightVecLen, lightVector.y / lightVecLen, lightVector.z / lightVecLen); //wersor do światła
-
-        //    double cosNL = L.x*N.x + L.y*N.y + L.z*N.z;
-        //    if (double.IsNaN(cosNL))
-        //        cosNL = 0.0;
-
-        //    double R = kd * Il.R * Io.R * cosNL;
-        //    double G = kd * Il.G * Io.G * cosNL;
-        //    double B = kd * Il.B * Io.B * cosNL;
-
-        //    return Color.FromArgb(Convert.ToInt32(R*255), Convert.ToInt32(G*255), Convert.ToInt32(B*255));
-        //}
-        //private Func<int, int, Color> UseLambert = (x, y) => Lambert(x, y, 1.0, Color.White, Color.Red, lightPosition, normalVersor);
-        //private Func<int, int, Color> Lmb(double kd, Color light, Color pixel, (int x, int y, int z) lightposition, (double x, double y, double z) N)
-        //{
-        //    return (x, y) => Lambert(x, y, kd, light, pixel, lightposition, N);
-        //}
 
         public Form1()
         {
@@ -56,30 +23,46 @@ namespace Filling
             lightZMaxLabel.Text = lightZTrackBar.Maximum.ToString();
 
             pictureBox.Image = new Bitmap(pictureBox.ClientSize.Width, pictureBox.ClientSize.Height);
-            img = new Bitmap(Image.FromFile($"{openFileDialog1.InitialDirectory}/photo2.jpg"), pictureBox.ClientSize.Width, pictureBox.ClientSize.Height);
+            img = new Bitmap(Image.FromFile($"{openFileDialog1.InitialDirectory}\\photo2.jpg"), pictureBox.ClientSize.Width, pictureBox.ClientSize.Height);
+            map = Image.FromFile($"{mapOpenFileDialog.InitialDirectory}\\{mapOpenFileDialog.FileName}") as Bitmap;
 
             // początkowe wartości Lambert:
             lambertParameters = new LambertParameters
             {
-                kd = 1.0,
-                ks = 0.0,
-                m = 1,
+                kd = Convert.ToDouble(kdTrackBar.Value / 100.0),
+                ks = Convert.ToDouble(ksTrackBar.Value / 100.0),
+                m = mTrackBar.Value,
                 Light = Color.FromArgb(255, 255, 255),  //white
+
                 LightPosition = (pictureBox.ClientSize.Width / 2, pictureBox.ClientSize.Height / 2, lightZTrackBar.Value),
-                N = (0.0, 0.0, 1.0),
+                LightR = 100,
+                T = 5.0,
+                UseLight = true,
+
+                CenterCoords = (pictureBox.ClientSize.Width / 2, pictureBox.ClientSize.Height / 2),
+                ReflectorH = 10,
+                ReflectorColor = Color.Red,
+
+                t = 0.0,
+                Normal = (x, y) => (0.0, 0.0, 1.0),
                 V = (0.0, 0.0, 1.0)
             };
 
             Grid = new Grid(pictureBox.ClientSize.Width, pictureBox.ClientSize.Height, (int)numericUpDownX.Value, (int)numericUpDownY.Value, img.GetPixel, Color.Black);
+
+            timer = new System.Timers.Timer(500);
+            timer.AutoReset = true;
+            timer.Elapsed += AddToTimer;
         }
 
         private void pictureBox_Paint(object sender, PaintEventArgs e)
         {
             pictureBox.Image.Dispose();
-            if (lambertCheckBox.Checked)
+            //if (lambertCheckBox.Checked)
                 pictureBox.Image = Grid.Paint(contourCheckBox.Checked, lambertParameters.GetColor);
-            else
-                pictureBox.Image = Grid.Paint(contourCheckBox.Checked);
+            //else
+                //pictureBox.Image = Grid.Paint(contourCheckBox.Checked);
+            flowLayoutPanel1.Refresh();
         }
 
         private void pictureBox_MouseDown(object sender, MouseEventArgs e)
@@ -159,22 +142,106 @@ namespace Filling
         {
             lambertParameters.LightPosition.z = lightZTrackBar.Value;
             lightZValue.Text = lightZTrackBar.Value.ToString();
+            lightZValue.Refresh();
         }
 
         private void kdTrackBar_ValueChanged(object sender, EventArgs e)
         {
-            //ksTrackBar.Value = 100 - kdTrackBar.Value;
             lambertParameters.kd = Convert.ToDouble(kdTrackBar.Value) / Convert.ToDouble(kdTrackBar.Maximum);
+            kdLabel.Text = (kdTrackBar.Value / 100.0).ToString();
+            if (lambertParameters.ks*100 + kdTrackBar.Value > 100)
+            {
+                lambertParameters.ks = (100.0 - kdTrackBar.Value) / 100.0;
+                ksTrackBar.Value = Convert.ToInt32(lambertParameters.ks * 100);
+            }
+            kdLabel.Refresh();
         }
 
         private void ksTrackBar_ValueChanged(object sender, EventArgs e)
         {
             lambertParameters.ks = Convert.ToDouble(ksTrackBar.Value) / Convert.ToDouble(ksTrackBar.Maximum);
+            ksLabel.Text = (ksTrackBar.Value / 100.0).ToString();
+            if (lambertParameters.kd*100 + ksTrackBar.Value > 100)
+            {
+                lambertParameters.kd = (100.0 - ksTrackBar.Value) / 100.0;
+                kdTrackBar.Value = Convert.ToInt32(lambertParameters.kd * 100);
+            }
+            ksLabel.Refresh();
         }
 
         private void mTrackBar_ValueChanged(object sender, EventArgs e)
         {
             lambertParameters.m = mTrackBar.Value;
+            mLabel.Text = mTrackBar.Value.ToString();
+            mLabel.Refresh();
+        }
+
+        private void lambertCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            lambertParameters.UseLight = lightZTrackBar.Enabled = lambertCheckBox.Checked;
+        }
+
+        private void constVecRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (constVecRadioButton.Checked)
+                lambertParameters.Normal = (x, y) => (0.0, 0.0, 1.0);
+        }
+
+        private void mapVecRadioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (mapVecRadioButton.Checked)
+            {
+                changeMapButton.Enabled = true;
+                lambertParameters.Normal = (x, y) =>
+                {
+                    Color c = map.GetPixel(x % map.Width, y % map.Height);
+                    double X = (c.R / 255.0 * 2.0) - 1.0;
+                    double Y = (c.G / 255.0 * 2.0) - 1.0;
+                    double Z = (c.B / 255.0 * 2.0);
+                    return (X, Y, Z);
+                };
+            }
+            else
+                changeMapButton.Enabled = false;
+        }
+
+        private void changeMapButton_Click(object sender, EventArgs e)
+        {
+            if (mapOpenFileDialog.ShowDialog() == DialogResult.OK)
+                map = Image.FromFile($"{mapOpenFileDialog.FileName}") as Bitmap;
+        }
+
+        private void timeStartButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = true;
+            lightZTrackBar.Enabled = false;
+        }
+
+        private void timerStopButton_Click(object sender, EventArgs e)
+        {
+            timer.Enabled = false;
+            lambertParameters.LightPosition = (lambertParameters.CenterCoords.x, lambertParameters.CenterCoords.y, lightZTrackBar.Value);
+            lightZTrackBar.Enabled = true;
+        }
+
+        private void AddToTimer(object sender, System.Timers.ElapsedEventArgs args)
+        {
+            lambertParameters.MoveLight();
+            lightZValue.Text = lambertParameters.LightPosition.z.ToString();
+        }
+
+        private void lightColorButton_Click(object sender, EventArgs e)
+        {
+            if (lightColorDialog.ShowDialog() == DialogResult.OK)
+                lambertParameters.Light = lightColorDialog.Color;
+        }
+
+        private void reflectorCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (reflectorCheckBox.Checked)
+                lambertParameters.ReflectorH = 10;
+            else
+                lambertParameters.ReflectorH = -1;
         }
     }
 }
